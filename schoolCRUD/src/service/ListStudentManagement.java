@@ -11,6 +11,11 @@ import java.util.List;
 public class ListStudentManagement{
     private List<Student> studentList = new ArrayList<>();
     private DefaultViewer dv = new DefaultViewer();
+    private ListStudentManagement(){};
+    private static ListStudentManagement lsm = new ListStudentManagement();
+    public static ListStudentManagement getInstance() {
+        return lsm;
+    }
     public boolean checkRedundancyId(String id) {
         for (int i = 0; i < studentList.size(); i++) {
             if (studentList.get(i).getId().equals(id)) {

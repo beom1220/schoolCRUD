@@ -85,7 +85,6 @@ public final class Function {
                 studentInfo();
                 return 1;
             case 3: // 성적 열람, 수정, 삭제, 등록
-                ListStudentManagement lsm = new ListStudentManagement();
                 dv.selectStudent();
                 Student student = selectStudent();
                 dv.selectGradeFunction(student);
@@ -100,7 +99,7 @@ public final class Function {
     }
 
     private void manageGrade(Student student) {
-        ListStudentManagement lsm = new ListStudentManagement();
+        ListStudentManagement lsm = ListStudentManagement.getInstance();
         switch (sc.nextInt()) {
             case 0:
                 break;
@@ -249,7 +248,7 @@ public final class Function {
 
     private void changeStudentId(Student student) {
         StudentViewer sv = new StudentViewer();
-        ListStudentManagement lsm = new ListStudentManagement();
+        ListStudentManagement lsm = ListStudentManagement.getInstance();
         int level, schoolClass, classNum;
         do {
             sv.levelMessage();
@@ -266,7 +265,7 @@ public final class Function {
     }
 
     public Student selectStudent() {
-        ListStudentManagement lsm = new ListStudentManagement();
+        ListStudentManagement lsm = ListStudentManagement.getInstance();
         dv.selectStudent();
         int exist = 0;
         do {
@@ -278,7 +277,7 @@ public final class Function {
         return lsm.getStudentList().get(exist);
     }
     private int existStudent(int studentId) {
-        ListStudentManagement lsm = new ListStudentManagement();
+        ListStudentManagement lsm = ListStudentManagement.getInstance();
         for (int i = 0; i < lsm.getStudentList().size(); i++) {
             if (lsm.getStudentList().get(i).getStudentId() == studentId) {
                 return i;

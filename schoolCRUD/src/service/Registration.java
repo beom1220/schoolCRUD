@@ -34,10 +34,10 @@ public class Registration {
         dv.inputPasswordMessage();
         String password = sc.nextLine();
         if (selectJob == 1) {
-            ListStudentManagement lsm = new ListStudentManagement();
+            ListStudentManagement lsm = ListStudentManagement.getInstance();
             lsm.addStudent(signUpStudent(name, gender, birthday, id, password));
         } else {
-            ListTeacherManagement ltm = new ListTeacherManagement();
+            ListTeacherManagement ltm = ListTeacherManagement.getInstance();
             ltm.addTeacher(signUpTeacher(name, gender, birthday, id, password));
         }
     }
@@ -66,7 +66,7 @@ public class Registration {
 
     public Student signUpStudent(String name, Gender gender, int birthday, String id, String password) {
         StudentViewer sv = new StudentViewer();
-        ListStudentManagement lsm = new ListStudentManagement();
+        ListStudentManagement lsm = ListStudentManagement.getInstance();
         int level, schoolClass, classNum;
         do {
             sv.levelMessage();
@@ -81,8 +81,8 @@ public class Registration {
     }
 
     public boolean checkRedundancyId(String id) {
-        ListTeacherManagement ltm = new ListTeacherManagement();
-        ListStudentManagement lsm = new ListStudentManagement();
+        ListTeacherManagement ltm = ListTeacherManagement.getInstance();
+        ListStudentManagement lsm = ListStudentManagement.getInstance();
         if (lsm.checkRedundancyId(id) || ltm.checkRedundancyId(id)) {
             return true;
         }

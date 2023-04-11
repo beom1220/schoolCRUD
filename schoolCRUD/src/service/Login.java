@@ -11,8 +11,8 @@ import java.util.Scanner;
 public class Login {
     private DefaultViewer dv = new DefaultViewer();
     private Scanner sc = new Scanner(System.in);
-    private ListStudentManagement lsm = new ListStudentManagement();
-    private ListTeacherManagement ltm = new ListTeacherManagement();
+    private ListStudentManagement lsm = ListStudentManagement.getInstance();
+    private ListTeacherManagement ltm = ListTeacherManagement.getInstance();
     public User signIn() {
         String id, pw;
         int studentAccountIndex = -1;
