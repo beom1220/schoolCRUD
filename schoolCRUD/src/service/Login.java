@@ -4,12 +4,12 @@ import user.Student;
 import user.Teacher;
 import user.User;
 import viewer.DefaultViewer;
+import viewer.StudentViewer;
+import viewer.TeacherViewer;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class Login {
-    private DefaultViewer dv = new DefaultViewer();
     private Scanner sc = new Scanner(System.in);
     private ListStudentManagement lsm = ListStudentManagement.getInstance();
     private ListTeacherManagement ltm = ListTeacherManagement.getInstance();
@@ -18,23 +18,23 @@ public class Login {
         int studentAccountIndex = -1;
         int teacherAccountIndex = -1;
         do {
-            dv.checkIdMessage();
+            DefaultViewer.checkIdMessage();
             id = sc.nextLine();
-            dv.checkPwMessage();
+            DefaultViewer.checkPwMessage();
             pw = sc.nextLine();
             studentAccountIndex = matchStudentId(id, pw);
             teacherAccountIndex = matchTeacherId(id, pw);
             if (studentAccountIndex * teacherAccountIndex == 1) {
-                dv.failSignIn();
+                DefaultViewer.failSignIn();
             }
         } while (studentAccountIndex == -1 && teacherAccountIndex == -1);
 
         if (studentAccountIndex != -1) {
-            dv.studentSignIn();
+            StudentViewer.studentSignIn();
             Student student = lsm.getStudentList().get(studentAccountIndex);
             return student;
         } else {
-            dv.teacherSignIn();
+            TeacherViewer.teacherSignIn();
             Teacher teacher = ltm.getTeacherList().get(teacherAccountIndex);
             return teacher;
         }

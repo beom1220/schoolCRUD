@@ -3,14 +3,13 @@ package service;
 import information.Grade;
 import user.Student;
 import viewer.DefaultViewer;
+import viewer.StudentViewer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class ListStudentManagement{
     private List<Student> studentList = new ArrayList<>();
-    private DefaultViewer dv = new DefaultViewer();
     private ListStudentManagement(){};
     private static ListStudentManagement lsm = new ListStudentManagement();
     public static ListStudentManagement getInstance() {
@@ -19,7 +18,7 @@ public class ListStudentManagement{
     public boolean checkRedundancyId(String id) {
         for (int i = 0; i < studentList.size(); i++) {
             if (studentList.get(i).getId().equals(id)) {
-                dv.redundancyIdMessage();
+                DefaultViewer.redundancyIdMessage();
                 return true;
             }
         }
@@ -28,7 +27,7 @@ public class ListStudentManagement{
     public boolean checkRedundancyStudentId(int studentId) {
         for (int i = 0; i < studentList.size(); i++) {
             if (studentList.get(i).getStudentId() == studentId) {
-                dv.redundancyStudentIdMessage();
+                StudentViewer.redundancyStudentIdMessage();
                 return true;
             }
         }

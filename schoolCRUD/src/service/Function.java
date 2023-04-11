@@ -2,41 +2,46 @@ package service;
 
 import information.Gender;
 import information.Grade;
+import information.Subject;
 import viewer.DefaultViewer;
 import user.Student;
 import user.Teacher;
 import user.User;
 import viewer.StudentViewer;
+import viewer.TeacherViewer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+
+import static information.Gender.FEMALE;
+import static information.Gender.MALE;
+import static information.Subject.*;
 
 public final class Function {
-    private DefaultViewer dv = new DefaultViewer();
     private Scanner sc = new Scanner(System.in);
     public boolean selectSign() {
-        dv.exeMessage();
-        return (sc.nextInt() == 1);
+        DefaultViewer.exeMessage();
+        return (tryIntException() == 1);
     }
 
     public int selectStudentFunction(Student student) {
-        switch (sc.nextInt()) {
+        switch (tryIntException()) {
             case 0:
-                dv.signOut();
+                DefaultViewer.signOut();
                 return 0;
             case 1:
-                dv.inquiryStudentInfo(student);
+                StudentViewer.inquiryStudentInfo(student);
                 return 1;
             case 2:
                 int season = selectSeason(student);
-                dv.inquiryGrade(seasonToString(season), student, season-1);
+                if (season == 0) {
+                    return 0;
+                }
+                StudentViewer.inquiryGrade(seasonToString(season), student, season - 1);
                 return 1;
             default:
-                dv.failFunctionMessage();
+                DefaultViewer.failFunctionMessage();
                 return 1;
-        }
+            }
     }
 
     private String seasonToString(int season) {
@@ -60,21 +65,32 @@ public final class Function {
     }
 
     private int selectSeason(Student student) {
-        dv.selectExamSeason();
+        StudentViewer.selectExamSeason();
         int season;
         boolean seasonYN;
         do {
-            season = sc.nextInt(); // 1~12로 받아서 0~11번 인덱스에 접근해야.
-            seasonYN = (student.getGradeList().size() >= season && season > 0);
+            season = inputSeason(); // 1~12로 받아서 0~11번 인덱스에 접근해야.
+            seasonYN = (student.getGradeList().size() >= season);
             if (!seasonYN) {
-                dv.failSeasonMessage();
+                TeacherViewer.failSeasonMessage();
             }
         } while (!seasonYN);
         return season;
     }
 
+    private int inputSeason() {
+        while (true) {
+            int input = tryIntException();
+            if (input >= 0 && input < 13) {
+                return input;
+            } else {
+                DefaultViewer.errorMessage();
+            }
+        }
+    }
+
     public int selectTeacherFunction(Teacher teacher) {
-        switch (sc.nextInt()) {
+        switch (tryIntException()) {
             case 0:
                 return 0;
             case 1: // 교사 본인 정보 조회 및 수정 -> 아직 수정 안 드감.
@@ -85,58 +101,71 @@ public final class Function {
                 studentInfo();
                 return 1;
             case 3: // 성적 열람, 수정, 삭제, 등록
-                dv.selectStudent();
                 Student student = selectStudent();
-                dv.selectGradeFunction(student);
+                TeacherViewer.selectGradeFunction(student);
                 manageGrade(student);
                 return 1;
             case 4:
                 return 1;
             default:
-                dv.failFunctionMessage();
+                DefaultViewer.failFunctionMessage();
                 return 0;
         }
     }
 
     private void manageGrade(Student student) {
         ListStudentManagement lsm = ListStudentManagement.getInstance();
-        switch (sc.nextInt()) {
+        switch (tryIntException()) {
             case 0:
                 break;
             case 1:
                 // 열람
                 int season = selectSeason(student);
-                dv.inquiryGrade(seasonToString(season), student, season-1);
+                if (season == 0) {
+                    break;
+                }
+                StudentViewer.inquiryGrade(seasonToString(season), student, season-1);
                 break;
             case 2:
                 // 수정
                 season = selectSeason(student);
+                if (season == 0) {
+                    break;
+                }
                 changeGrade(student.getGradeList().get(season-1));
                 break;
             case 3:
                 // 삭제
                 season = selectSeason(student);
-                student.getGradeList().remove(season-1);
-                dv.delGrade();
+                if (season == 0) {
+                    break;
+                }
+                deleteGrade(student, season-1);
+                //student.getGradeList().remove(season-1);
                 break;
             case 4:
                 // 등록
-                lsm.addGrade(selectStudent(), newGrade());
+                lsm.addGrade(student, newGrade());
                 break;
             default:
-                dv.failFunctionMessage();
+                DefaultViewer.failFunctionMessage();
                 break;
         }
     }
 
+    private void deleteGrade(Student student, int season) {
+        Grade empty = new Grade(0, 0, 0,0,0,0);
+        student.getGradeList().set(season, empty);
+    }
+
     private void changeGrade(Grade grade) {
-        dv.selectChangeGradeSubjectFunction();
-        int sub = sc.nextInt() - 1;
+        TeacherViewer.selectChangeGradeSubjectFunction();
+        int sub = tryIntException() - 1;
         int score;
         do {
             inputGrade(sub);
-            score = sc.nextInt();
-        } while (score >= 0 && score <= 100);
+            score = tryIntException();
+        } while (!(score >= 0 && score <= 100));
         switch (sub) {
             case 0: //국수영사과역
                 grade.setKor(score);
@@ -157,67 +186,48 @@ public final class Function {
                 grade.setHistory(score);
                 break;
             default:
+                DefaultViewer.errorMessage();
                 break;
         }
     }
 
     public void teacherInfo(Teacher teacher) {
-        dv.inquiryTeacherInfo(teacher);
-        switch (sc.nextInt()) {
+        TeacherViewer.inquiryTeacherInfo(teacher);
+        switch (tryIntException()) {
             case 0:
                 break;
             case 1:
                 // 이름 수정
-                changeName(teacher);
+                TeacherViewer.changeNameMessage();
+                teacher.setName(inputName());
                 break;
             case 2:
                 // 과목 변경
-                changeSubject(teacher);
+                TeacherViewer.inputSubjectMessage();
+                teacher.setSubject(selectSubject());
                 break;
             case 3:
-                // 성별 변경..? 입력할 때 잘못할 수도 있으니까,,
-                changeGender(teacher);
+                // 성별 변경
+                TeacherViewer.changeGenderMessage();
+                teacher.setGender(inputGender());
                 break;
             case 4:
-                // 생년월일 변경..?
-                changeBirthday(teacher);
+                // 생년월일 변경
+                TeacherViewer.changeBirthdayMessage();
+                teacher.setBirthday(inputBirthday());
                 break;
             case 5:
                 // 아이디 변경 -> 중복 검사 필요함.
-                changeId(teacher);
+                TeacherViewer.changeIdMessage();
+                teacher.setId(inputId());
                 break;
         }
     }
-    private void changeId(User user) {
-        Registration rg = new Registration();
-        user.setId(rg.inputId());
-    }
-    private void changeBirthday(User user) {
-        dv.changeBirthdayMessage();
-        user.setBirthday(sc.nextInt());
-    }
-
-    private void changeGender(User user) {
-        dv.changeGenderMessage();
-        if (sc.nextInt() == 1) {
-            user.setGender(Gender.MALE);
-        } else {
-            user.setGender(Gender.FEMALE);
-        }
-    }
-    public void changeName(User user) {
-        dv.changeNameMessage();
-        user.setName(sc.nextLine());
-    }
-    public void changeSubject(Teacher teacher) {
-        Registration rg = new Registration();
-        teacher.setSubject(rg.selectSubject(sc.nextInt()));
-    }
     public void studentInfo() {
         Student student = selectStudent();
-        dv.inquiryStudentInfo(student);
-        dv.addOnMessage();
-        switch (sc.nextInt()) {
+        StudentViewer.inquiryStudentInfo(student);
+        TeacherViewer.addOnMessage();
+        switch (tryIntException()) {
             case 0 :
                 break;
             case 1:
@@ -226,53 +236,71 @@ public final class Function {
                 break;
             case 2:
                 // 이름 수정
-                changeName(student);
+                TeacherViewer.changeNameMessage();
+                student.setName(inputName());
                 break;
             case 3:
                 // 성별 수정
-                changeGender(student);
+                TeacherViewer.changeGenderMessage();
+                student.setGender(inputGender());
                 break;
             case 4:
                 // 생년월일 수정
-                changeBirthday(student);
+                TeacherViewer.changeBirthdayMessage();
+                student.setBirthday(inputBirthday());
                 break;
             case 5:
                 // id 수정 -> 중복 검사 필요
-                changeId(student);
+                TeacherViewer.changeIdMessage();
+                student.setId(inputId());
                 break;
             default:
-                dv.failFunctionMessage();
+                DefaultViewer.failFunctionMessage();
                 break;
         }
     }
 
     private void changeStudentId(Student student) {
-        StudentViewer sv = new StudentViewer();
+        int [] stdId = inputStudentId();
+        student.setLevel(stdId[0]);
+        student.setSchoolClass(stdId[1]);
+        student.setClassNum(stdId[2]);
+        student.setStudentId(stdId[0] * 10000 + stdId[1] * 100 + stdId[2]);
+    }
+    private int[] inputStudentId() {
         ListStudentManagement lsm = ListStudentManagement.getInstance();
         int level, schoolClass, classNum;
         do {
-            sv.levelMessage();
-            level = sc.nextInt(); // 이하 3개 입력에 입력값 제한 넣어야 함.
-            sv.schoolClassMessage();
-            schoolClass = sc.nextInt();
-            sv.classNumMessage();
-            classNum = sc.nextInt();
+            StudentViewer.levelMessage();
+            level = inputRange(3); // 이하 3개 입력에 입력값 제한 넣어야 함.
+            StudentViewer.schoolClassMessage();
+            schoolClass = inputRange(10);
+            StudentViewer.classNumMessage();
+            classNum = inputRange(30);
         } while (lsm.checkRedundancyStudentId(level * 10000 + schoolClass * 100 + classNum));
-        student.setLevel(level);
-        student.setSchoolClass(schoolClass);
-        student.setClassNum(classNum);
-        student.setStudentId(level * 10000 + schoolClass * 100 + classNum);
+        int[] stdId = {level, schoolClass, classNum};
+        return stdId;
+    }
+    private int inputRange(int range) {
+        while (true) {
+            int input = tryIntException();
+            if (input>0 && input<=range) {
+                return input;
+            } else {
+                DefaultViewer.errorMessage();
+            }
+        }
     }
 
     public Student selectStudent() {
         ListStudentManagement lsm = ListStudentManagement.getInstance();
-        dv.selectStudent();
+        TeacherViewer.selectStudent();
         int exist = 0;
         do {
             if (exist == -1) {
-                dv.noStudentMessage();
+                TeacherViewer.noStudentMessage();
             }
-            exist = existStudent(sc.nextInt());
+            exist = existStudent(tryIntException());
         } while (exist == -1);
         return lsm.getStudentList().get(exist);
     }
@@ -289,13 +317,162 @@ public final class Function {
         List<Integer> grades = new ArrayList<>();
         for (int sub = 0; sub < 6; sub++) {
             inputGrade(sub);
-            grades.add(sc.nextInt());
+            grades.add(inputScore());
         }
         Grade grade = new Grade(grades.get(0), grades.get(1), grades.get(2), grades.get(3), grades.get(4), grades.get(5));
         return grade;
     }
+    private int inputScore() {
+        while (true) {
+            int score = tryIntException();
+            if (score >= 0 && score <=100) {
+                return score;
+            } else {
+                DefaultViewer.errorMessage();
+            }
+        }
+    }
     private void inputGrade(int sub) {
         List<String> subNames = new ArrayList<>(Arrays.asList("국어", "수학", "영어", "사회", "과학", "역사"));
-        dv.inputGradeMessage(subNames.get(sub));
+        TeacherViewer.inputGradeMessage(subNames.get(sub));
+    }
+    public static int tryIntException() {
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            try {
+                int num = sc.nextInt();
+                sc.nextLine();
+                return num;
+            } catch (InputMismatchException ime) {
+                DefaultViewer.errorMessage();
+                sc = new Scanner(System.in);
+            }
+        }
+    }
+    public String inputName() {
+        while (true) {
+            String input = sc.nextLine();
+            if (!input.matches("[\\p{L}]+$")) {
+                DefaultViewer.errorMessage();
+                continue;
+            }
+            return input;
+        }
+    }
+
+    public int inputJob() {
+        while (true) {
+            int input = tryIntException();
+            if (input == 1 || input == 2) {
+                return input;
+            } else {
+                DefaultViewer.errorMessage();
+            }
+        }
+    }
+
+    public int inputBirthday() {
+        int birth;
+        while (true) {
+            String input = sc.nextLine();
+            if(!input.matches("\\d{8}")) {
+                DefaultViewer.errorMessage();
+                continue;
+            }
+            try {
+                birth = Integer.parseInt(input);
+                break;
+            } catch (NumberFormatException nfe) {
+                DefaultViewer.errorMessage();
+            }
+        }
+        return birth;
+    }
+    public Gender inputGender() {
+        while (true) {
+            switch (tryIntException()) {
+                case 1:
+                    return MALE;
+                case 2:
+                    return FEMALE;
+                default:
+                    DefaultViewer.errorMessage();
+                    break;
+            }
+        }
+    }
+    public String inputId() {
+        String id;
+        do {
+            DefaultViewer.inputIdMessage();
+            id = sc.nextLine();
+        } while (checkRedundancyId(id));
+        return id;
+    }
+    public boolean checkRedundancyId(String id) {
+        ListTeacherManagement ltm = ListTeacherManagement.getInstance();
+        ListStudentManagement lsm = ListStudentManagement.getInstance();
+        if (lsm.checkRedundancyId(id) || ltm.checkRedundancyId(id)) {
+            return true;
+        }
+        DefaultViewer.okayId();
+        return false;
+    }
+    public void signUp() {
+        DefaultViewer.selectJob();
+        int selectJob = inputJob();
+        DefaultViewer.inputNameMessage();
+        String name = inputName();
+        DefaultViewer.inputGenderMessage();
+        Gender gender = inputGender();
+        DefaultViewer.inputBirthdayMessage();
+        int birthday = inputBirthday();
+        String id = inputId();
+        DefaultViewer.inputPasswordMessage();
+        String password = sc.nextLine();
+        if (selectJob == 1) {
+            ListStudentManagement lsm = ListStudentManagement.getInstance();
+            lsm.addStudent(signUpStudent(name, gender, birthday, id, password));
+        } else {
+            ListTeacherManagement ltm = ListTeacherManagement.getInstance();
+            ltm.addTeacher(signUpTeacher(name, gender, birthday, id, password));
+        }
+        DefaultViewer.successRegistration();
+    }
+
+    public Teacher signUpTeacher(String name, Gender gender, int birthday, String id, String password) {
+        TeacherViewer.inputSubjectMessage();
+        Teacher teacher = new Teacher(selectSubject(), name, gender, birthday, id, password);
+        return teacher;
+    }
+
+    public Student signUpStudent(String name, Gender gender, int birthday, String id, String password) {
+        int[] stdId = inputStudentId();
+        Student student = new Student(name, gender, birthday, id, password, stdId[0], stdId[1], stdId[2]);
+        return student;
+    }
+
+    public Subject selectSubject() {
+        while (true) {
+            switch (tryIntException()) {
+                case 1:
+                    return KOR;
+                case 2:
+                    return MATH;
+                case 3:
+                    return ENG;
+                case 4:
+                    return SCIENCE;
+                case 5:
+                    return SOCIETY;
+                case 6:
+                    return HISTORY;
+                case 7:
+                    return OTHER;
+                default:
+                    DefaultViewer.errorMessage();
+                    break;
+            }
+        }
     }
 }

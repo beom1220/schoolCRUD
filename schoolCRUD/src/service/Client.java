@@ -24,24 +24,21 @@ public final class Client {
                     runAdmin((Admin) user);
                 }
             } else {
-                Registration rg = new Registration();
-                rg.signUp();
+                func.signUp();
             }
         }
     }
     public void runStudent(Student student) {
-        StudentViewer sv = new StudentViewer();
         while (true) {
-            sv.exeMessage();
+            StudentViewer.exeMessage();
             if (func.selectStudentFunction(student) == 0) {
                 break;
             }
         }
     }
     public void runTeacher(Teacher teacher) {
-        TeacherViewer tv = new TeacherViewer();
         while (true) {
-            tv.exeMessage();
+            TeacherViewer.exeMessage();
             if (func.selectTeacherFunction(teacher) == 0) {
                 break;
             }

@@ -1,16 +1,13 @@
 package service;
 
-import user.Student;
 import user.Teacher;
 import viewer.DefaultViewer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class ListTeacherManagement {
     private List<Teacher> teacherList = new ArrayList<>();
-    private DefaultViewer dv = new DefaultViewer();
     private static ListTeacherManagement ltm = new ListTeacherManagement();
     private ListTeacherManagement(){};
     public static ListTeacherManagement getInstance() {
@@ -19,7 +16,7 @@ public class ListTeacherManagement {
     public boolean checkRedundancyId(String id) {
         for (int i = 0; i < teacherList.size(); i++) {
             if (teacherList.get(i).getId().equals(id)) {
-                dv.redundancyIdMessage();
+                DefaultViewer.redundancyIdMessage();
                 return true;
             }
         }
