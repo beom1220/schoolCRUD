@@ -9,11 +9,10 @@ import viewer.StudentViewer;
 import viewer.TeacherViewer;
 
 public final class Client {
-    Function func = new Function();
+    private Service serv = new Service();
     public void run() {
-        DefaultViewer dv = new DefaultViewer();
         while (true) {
-            if (func.selectSign()) {
+            if (serv.selectSign()) {
                 Login lg = new Login();
                 User user = lg.signIn();
                 if (user instanceof Student) {
@@ -24,14 +23,14 @@ public final class Client {
                     runAdmin((Admin) user);
                 }
             } else {
-                func.signUp();
+                serv.signUp();
             }
         }
     }
     public void runStudent(Student student) {
         while (true) {
             StudentViewer.exeMessage();
-            if (func.selectStudentFunction(student) == 0) {
+            if (serv.selectStudentFunction(student) == 0) {
                 break;
             }
         }
@@ -39,7 +38,7 @@ public final class Client {
     public void runTeacher(Teacher teacher) {
         while (true) {
             TeacherViewer.exeMessage();
-            if (func.selectTeacherFunction(teacher) == 0) {
+            if (serv.selectTeacherFunction(teacher) == 0) {
                 break;
             }
         }

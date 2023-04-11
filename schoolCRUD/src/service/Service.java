@@ -6,7 +6,6 @@ import information.Subject;
 import viewer.DefaultViewer;
 import user.Student;
 import user.Teacher;
-import user.User;
 import viewer.StudentViewer;
 import viewer.TeacherViewer;
 
@@ -16,12 +15,12 @@ import static information.Gender.FEMALE;
 import static information.Gender.MALE;
 import static information.Subject.*;
 
-public final class Function {
+public final class Service {
     private Scanner sc = new Scanner(System.in);
     public boolean selectSign() {
         DefaultViewer.exeMessage();
         return (tryIntException() == 1);
-    }
+    } //로그인인지 회원가입인지 선택
 
     public int selectStudentFunction(Student student) {
         switch (tryIntException()) {
@@ -42,7 +41,7 @@ public final class Function {
                 DefaultViewer.failFunctionMessage();
                 return 1;
             }
-    }
+    } // 학생 로그인 시 기능 선택창
 
     private String seasonToString(int season) {
         String midOrFinal;
@@ -62,7 +61,7 @@ public final class Function {
             semester = "1";
         }
         return semester + "학년 " + level + "학기 " + midOrFinal;
-    }
+    } // 선택한 시험 시기가 숫자로 저장돼 있으서, 출력하기 위해 문자로 바꿔주는.
 
     private int selectSeason(Student student) {
         StudentViewer.selectExamSeason();
@@ -76,7 +75,7 @@ public final class Function {
             }
         } while (!seasonYN);
         return season;
-    }
+    } // 시험 시기 선택. 저장돼 있는 시험 시기보다 작은 수를 받을 때까지.
 
     private int inputSeason() {
         while (true) {
@@ -87,7 +86,7 @@ public final class Function {
                 DefaultViewer.errorMessage();
             }
         }
-    }
+    } // 시험 시기 선택 시 0~12 중에 넣었는지 확인해주는.
 
     public int selectTeacherFunction(Teacher teacher) {
         switch (tryIntException()) {
@@ -111,7 +110,7 @@ public final class Function {
                 DefaultViewer.failFunctionMessage();
                 return 0;
         }
-    }
+    } // 교사 로그인 시 기능 선택창.
 
     private void manageGrade(Student student) {
         ListStudentManagement lsm = ListStudentManagement.getInstance();
@@ -151,12 +150,12 @@ public final class Function {
                 DefaultViewer.failFunctionMessage();
                 break;
         }
-    }
+    } // 학생 성적 관리 선택창.
 
     private void deleteGrade(Student student, int season) {
         Grade empty = new Grade(0, 0, 0,0,0,0);
         student.getGradeList().set(season, empty);
-    }
+    } // 학생 성적 삭제. 근데 아예 지워버리면 나중에 시기 확인 같은 거 할 때 문제 생길 수 있어서 전부 0인 거 만들어서 넣음.
 
     private void changeGrade(Grade grade) {
         TeacherViewer.selectChangeGradeSubjectFunction();
@@ -189,7 +188,7 @@ public final class Function {
                 DefaultViewer.errorMessage();
                 break;
         }
-    }
+    } // 성적 수정. 고른 시기에서 고른 과목 성적을 변경할 수 있음.
 
     public void teacherInfo(Teacher teacher) {
         TeacherViewer.inquiryTeacherInfo(teacher);
@@ -222,7 +221,7 @@ public final class Function {
                 teacher.setId(inputId());
                 break;
         }
-    }
+    } // 교사 정보 조회 및 수정
     public void studentInfo() {
         Student student = selectStudent();
         StudentViewer.inquiryStudentInfo(student);
@@ -258,7 +257,7 @@ public final class Function {
                 DefaultViewer.failFunctionMessage();
                 break;
         }
-    }
+    } // 학생 정보 조회 및 수정
 
     private void changeStudentId(Student student) {
         int [] stdId = inputStudentId();
