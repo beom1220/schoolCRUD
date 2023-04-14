@@ -13,7 +13,7 @@ public class TeacherViewer {
         System.out.println("********************************");
     }
     public static void inputSubjectMessage() {
-        System.out.println("당신의 교과목은 무엇입니까?");
+        System.out.println("교과목을 선택해주세요.");
         System.out.println("1.국어 2.수학 3.영어 4.과학 5.사회 6.역사 7.그외");
     }
     public static void teacherSignIn() {
@@ -33,9 +33,10 @@ public class TeacherViewer {
         System.out.println("3.성별 : " + teacher.getGender());
         System.out.println("4.생년월일 : " + teacher.getBirthday());
         System.out.println("5.아이디 : " + teacher.getId());
+    }
+    public static void addOnTeacherInfo() {
         System.out.print("정보 수정을 원하시면 수정할 정보에 해당되는 번호를 입력하세요.(0.뒤로가기) : ");
     }
-
     public static void noStudentMessage() {
         System.out.print("해당 학번의 학생에 대한 데이터가 없습니다. 학번을 다시 입력해주세요. : ");
     }
@@ -62,7 +63,7 @@ public class TeacherViewer {
 
     public static void selectGradeFunction(Student student) {
         System.out.println(student.getName() + " 학생의 성적에 관하여 실행할 기능의 번호를 입력해주세요.");
-        System.out.println("1.조회 2.수정 3.삭제 4.등록 (0.뒤로가기)");
+        System.out.println("1.조회 2.등록 3.수정 4.삭제 (0.뒤로가기)");
     }
     public static void delGrade() {
         System.out.println("해당되는 성적을 삭제했습니다.");

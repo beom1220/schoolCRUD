@@ -1,18 +1,20 @@
 package service;
 
+import user.Admin;
 import user.Student;
 import user.Teacher;
 import user.User;
+import viewer.AdminViewer;
 import viewer.DefaultViewer;
 import viewer.StudentViewer;
 import viewer.TeacherViewer;
 
 import java.util.Scanner;
 
-public class Login {
+public class LoginService {
     private Scanner sc = new Scanner(System.in);
-    private ListStudentManagement lsm = ListStudentManagement.getInstance();
-    private ListTeacherManagement ltm = ListTeacherManagement.getInstance();
+    private ListStudentManageService lsm = ListStudentManageService.getInstance();
+    private ListTeacherManageService ltm = ListTeacherManageService.getInstance();
     public User signIn() {
         String id, pw;
         int studentAccountIndex = -1;
@@ -22,6 +24,11 @@ public class Login {
             id = sc.nextLine();
             DefaultViewer.checkPwMessage();
             pw = sc.nextLine();
+            if (id.equals("admin") && pw.equals("admin1234")) {
+                Admin admin = new Admin();
+                AdminViewer.adminSignIn();
+                return admin;
+            }
             studentAccountIndex = matchStudentId(id, pw);
             teacherAccountIndex = matchTeacherId(id, pw);
             if (studentAccountIndex * teacherAccountIndex == 1) {

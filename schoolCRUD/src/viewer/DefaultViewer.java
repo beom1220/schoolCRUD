@@ -3,7 +3,7 @@ package viewer;
 import user.Student;
 import user.Teacher;
 
-public final class DefaultViewer {
+public class DefaultViewer {
     public static void exeMessage() {
         System.out.println("*********************************");
         System.out.println("****학생 및 교사 지원시스템입니다.****");
@@ -12,27 +12,27 @@ public final class DefaultViewer {
         System.out.println("*********************************");
     }
     public static void selectJob() {
-        System.out.print("당신의 직업은 무엇입니까? (1.학생 / 2.교사) : ");
+        System.out.print("직업을 선택해주세요. (1.학생 / 2.교사) : ");
     }
 
     public static void inputNameMessage() {
-        System.out.print("당신의 이름을 입력해주세요. : ");
+        System.out.print("이름을 입력해주세요. : ");
     }
 
     public static void inputGenderMessage() {
-        System.out.print("당신의 성별은 무엇입니까? (1.남성 / 2.여성) : ");
+        System.out.print("성별을 입력해주세요. (1.남성 / 2.여성) : ");
     }
 
     public static void inputBirthdayMessage() {
-        System.out.print("당신의 생년월일을 8자리로 입력해주세요.(ex:20001220) : ");
+        System.out.print("생년월일을 8자리로 입력해주세요.(ex:20001220) : ");
     }
 
     public static void inputIdMessage() {
-        System.out.print("당신이 사용할 ID를 입력해주세요. : ");
+        System.out.print("사용할 ID를 입력해주세요. : ");
     }
 
     public static void inputPasswordMessage() {
-        System.out.print("당신이 사용할 비밀번호를 입력해주세요. : ");
+        System.out.print("사용할 비밀번호를 입력해주세요. : ");
     }
 
     public static void redundancyIdMessage() {
